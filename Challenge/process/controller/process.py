@@ -43,7 +43,7 @@ class ProcessStartController(APIView):
 
 class ProcessPauseController(APIView):
 
-    def get(self, request, id):
+    def post(self, request, id):
         manager = ObjectMapper.get_manager(id, False)
 
         if manager is None:
@@ -54,7 +54,7 @@ class ProcessPauseController(APIView):
 
 class ProcessResumeController(APIView):
 
-    def get(self, request, id):
+    def post(self, request, id):
         manager = ObjectMapper.get_manager(id, False)
 
         if manager is None:
@@ -66,7 +66,7 @@ class ProcessResumeController(APIView):
 
 class ProcessStopController(APIView):
 
-    def get(self, request, id):
+    def post(self, request, id):
         manager = ObjectMapper.get_manager(id, False)
 
         if manager is None:
