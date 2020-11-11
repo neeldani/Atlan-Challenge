@@ -47,4 +47,4 @@ Request | Endpoint                                                              
 ```
 
 ### Methodology
-The client makes multiple `POST` requests to the server. The client reads a block of file which it sends to the server as `text`. The server reads the `POST requestbody` and then sends number of bytes read to the client. While the upload is taking place, the client can pause and cancel the upload. In case of upload cancel, a `POST` request is sent to the server to delete the intermediate file formed due to the upload process.
+The client makes multiple `POST` requests to the server. The client reads a block of file which it sends to the server as `text`. The server reads the `POST request body` and then sends number of bytes read to the client. While the upload is taking place, the client can pause and cancel the upload. In case of upload cancel, a `POST` request is sent to the server to delete the intermediate file formed due to the upload process.
