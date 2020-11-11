@@ -9,6 +9,8 @@ Request | Endpoint      | Description                       |
 |POST | `{id}/process/cancel/` | cancel long running process |
 |POST | `{id}/process/resume/` | resume a list of valid work types |
 
+### Methodology
+The client makes the `GET` request in order to start the long running process. The main thread dispatches a worker thread to tend to the request. The main thread exits with a response while the worker thread continues to run the process in background. This prevents timeouts. While the worker thread runs, a `POST` request can be made to pause, cancel and resume the process. 
 
 
 ## Resumable Download
