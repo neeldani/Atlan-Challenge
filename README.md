@@ -63,7 +63,7 @@ Request | Endpoint                                                              
 |:-----------|:------------------------------------------------------------------|:----------------------------------|
 |GET | `download/?file_name={file_name}&bytes_read={bytes_read}` | file_name (**reqd**) should be a valid file name present at the server's Files directory and (**bytes_read**) should be an integer  |
 
-### Reponse
+### Response
 
 ```javascript
 {
@@ -84,7 +84,7 @@ Request | Endpoint                                                              
 |GET | `upload/?file_name={file_name}&bytes_read={bytes_read}/` | file_name (**reqd**) should be a valid file name present at the server's Files directory and (**bytes_read**) should be an integer.  |
 |POST | `upload/cancel/?file_name={file_name}/` | file_name (**reqd**) which is being currently uploaded  |
 
-### Reponse
+### Response
 
 ```javascript
 {
@@ -110,4 +110,4 @@ The client makes multiple `POST` requests to the server. The client reads a bloc
 </br>
 [Resumable.js](http://resumablejs.com/)
 </br>
-[tus](https://github.com/tus/tusd)
+[Tus protocol](https://github.com/tus/tusd)
