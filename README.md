@@ -1,7 +1,7 @@
 # Atlan-Challenge
 
 ## Description
-This project provides REST API endpoints to pause, resume and abort a huge file upload, download and a long running server process. This would essentially help revert wrong uploads/ downloads and hence reduce the load by avoiding unecessary computation. The idea for this is similar to the methodolgy employed by the library resumable.js
+This project provides a set of REST API endpoints to pause, resume and abort a huge file upload, download as well as a long running server process. This would essentially prevent waste of server's resources in case of wrong uploads/ downloads, reducing the load by avoiding unecessary computation. The idea for this implementation has been somewhat drawn from the resumable.js library and the tus protocol.
 
 ## Installation
 ```
@@ -21,6 +21,9 @@ cd Challenge
 python manage.py runserver
 ```
 
+## Running client
+Since the methodology for resumable upload and download requires multiple POST and GET requests respectively, an implementation of clients for the download as well as the upload process has been provided. This essentially abstracts the multiple GET/ POST requests that the client needs to make to the server in order to completely download/ upload a file.
+
 ### To run download client
 Run the DownloadClient.py script present in the Atlan-Challenge directory
 ```
@@ -32,6 +35,13 @@ Run the UploadClient.py. script present in the Atlan-Challenge directory
 ```
 python UploadClient.py
 ```
+### Options on running the client program
+| CLI Input | Description |
+| :--- | :--- |
+| 1 | Start Upload/ Download |
+| 2 | Pause Upload/ Download |
+| 3 | Resume Upload/ Download |
+| 4 | Abort Upload/ Download |
 
 
 ## Resumable Process
@@ -83,7 +93,7 @@ Request | Endpoint                                                              
 ```
 
 ### Methodology
-The client makes multiple `POST` requests to the server. The client reads a block of file which it sends to the server as `text`. The server reads the `POST request body` and then sends number of bytes read to the client. While the upload is taking place, the client can pause and cancel the upload. In case of upload cancel, a `POST` request is sent to the server to delete the intermediate file formed due to the upload process.
+The client makes multiple `POST` requests to the server. The client reads a block of file which it sends to the server as `text`. The server reads the `POST request body` and then sends the number of bytes read to the client. While the upload is taking place, the client can pause and cancel the upload. In case of an upload cancel, a `POST` request is sent to the server to delete the intermediate file formed due to the ongoing upload process.
 
 
 ## Status Codes
@@ -93,3 +103,11 @@ The client makes multiple `POST` requests to the server. The client reads a bloc
 | 400 | `BAD REQUEST` |
 | 404 | `NOT FOUND` |
 | 500 | `INTERNAL SERVER ERROR` |
+
+
+## References
+[GitHub Atlan Challenge](https://github.com/Manvityagi/Atlan-Challenge---Long-Running-Task-Manager)
+</br>
+[Resumable.js](http://resumablejs.com/)
+</br>
+[tus](https://github.com/tus/tusd)
