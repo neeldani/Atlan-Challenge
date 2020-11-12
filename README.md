@@ -1,5 +1,39 @@
 # Atlan-Challenge
 
+## Description
+This project provides REST API endpoints to pause, resume and abort a huge file upload, download and a long running server process. This would essentially help revert wrong uploads/ downloads and hence reduce the load by avoiding unecessary computation. The idea for this is similar to the methodolgy employed by the library resumable.js
+
+## Installation
+```
+git clone https://github.com/neeldani/Atlan-Challenge.git
+cd Atlan-Challenge
+```
+
+### To run server using docker
+``` 
+docker build .
+docker-compose up
+```
+
+### To run on local
+```
+cd Challenge
+python manage.py runserver
+```
+
+### To run download client
+Run the DownloadClient.py script present in the Atlan-Challenge directory
+```
+python DownloadClient.py
+```
+
+### To run upload client
+Run the UploadClient.py. script present in the Atlan-Challenge directory
+```
+python UploadClient.py
+```
+
+
 ## Resumable Process
 
 Request | Endpoint      | Description                       |
