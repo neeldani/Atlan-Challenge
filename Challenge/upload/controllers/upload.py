@@ -13,7 +13,7 @@ class UploadStartController(APIView):
     def post(self, request):
         bytes_read = int(request.query_params['bytes_read'])
         file_name = request.query_params['file_name']
-        text = request.query_params['text']
+        text = request.data['text']
 
         manager = UploadManager(file_name, bytes_read)
 

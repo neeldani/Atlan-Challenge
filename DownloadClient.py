@@ -2,134 +2,139 @@ import requests
 import json
 import time
 import os
-import errno 
+import errno
 from threading import Thread
 
-def printProgressBar (percent_done, prefix = '', suffix = '', decimals = 1, length = 50, fill = '█', printEnd = "\r"):
+
+def printProgressBar(percent_done, prefix='', suffix='', decimals=1, length=50, fill='█', printEnd="\r"):
     """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
+	Call in a loop to create terminal progress bar
+	@params:
+		iteration   - Required  : current iteration (Int)
+		total       - Required  : total iterations (Int)
+		prefix      - Optional  : prefix string (Str)
+		suffix      - Optional  : suffix string (Str)
+		decimals    - Optional  : positive number of decimals in percent complete (Int)
+		length      - Optional  : character length of bar (Int)
+		fill        - Optional  : bar fill character (Str)
+		printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+	"""
     percent = ("{0:." + str(decimals) + "f}").format(percent_done)
-    filledLength = int(length * percent_done/100)
+    filledLength = int(length * percent_done / 100)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end=printEnd)
     # Print New Line on Complete
-    if percent_done == 100: 
+    if percent_done == 100:
         print()
+
 
 class DownloadClient:
 
-	def __init__(self, base_dir, file_name):
+    def __init__(self, base_dir, file_name):
 
-		self.base_dir = base_dir
-		self.file_name = file_name
-		self.download_path = self.base_dir + self.file_name
-		self.bytes_offset = 0
-		self.is_paused = False
-		self.is_cancelled = False
-		self.is_downloading = True
+        self.base_dir = base_dir
+        self.file_name = file_name
+        self.download_path = self.base_dir + self.file_name
+        self.bytes_offset = 0
+        self.is_paused = False
+        self.is_cancelled = False
+        self.is_downloading = True
 
-	def writeToFile(self, text) :
+    def writeToFile(self, text):
 
-		if os.path.exists(self.base_dir):
+        if os.path.exists(self.base_dir):
 
-			if not os.path.isfile(self.download_path):
-				file = open(self.download_path, 'w')
-			else:	
-				file = open(self.download_path, 'r+')
-		
-			file.seek(self.bytes_offset)
-			file.write(text)
-			
-			return True
+            if not os.path.isfile(self.download_path):
+                file = open(self.download_path, 'w')
+            else:
+                file = open(self.download_path, 'r+')
 
-		else:
-			raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_name)
+            file.seek(self.bytes_offset)
+            file.write(text)
 
+            return True
 
-	def start_download(self):
+        else:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_name)
 
-		done = False
+    def start_download(self):
 
-		while not done:
-			
-			#print("Downloading has started")
-			receive = requests.get('http://localhost:8000/download', 
-									params = {'path' : self.file_name, 'bytes_read' : str(self.bytes_offset)})
+        done = False
 
-			body = json.loads(receive.content)
-			text = body['file_content']
+        while not done:
 
-			status = self.writeToFile(text)
+            # print("Downloading has started")
+            receive = requests.get('http://localhost:8000/download',
+                                   params={'path': self.file_name, 'bytes_read': str(self.bytes_offset)})
 
-			self.bytes_offset = int(body["bytes_read"])
-			#print(self.bytes_offset)
-			done = bool(body['is_complete'])
+            body = json.loads(receive.content)
+            text = body['file_content']
 
-			printProgressBar(float(body['percentage_done']), prefix = "Progress", suffix = "Complete")
+            status = self.writeToFile(text)
 
-			while self.is_paused:
-				time.sleep(1)
+            self.bytes_offset = int(body["bytes_read"])
+            # print(self.bytes_offset)
+            done = bool(body['is_complete'])
 
-			if self.is_cancelled:
-				os.remove(self.download_path)
-				break
+            printProgressBar(float(body['percentage_done']), prefix="Progress", suffix="Complete")
 
-		self.is_downloading = False
+            while self.is_paused:
+                time.sleep(1)
 
-	def cancel_download(self):
-		self.is_paused = False
-		self.is_cancelled = True
+            if self.is_cancelled:
+                os.remove(self.download_path)
+                break
 
-	def pause_download(self):
-		self.is_paused = True
+        self.is_downloading = False
 
-	def resume_download(self):
-		self.is_paused = False
+    def cancel_download(self):
+        self.is_paused = False
+        self.is_cancelled = True
+
+    def pause_download(self):
+        self.is_paused = True
+
+    def resume_download(self):
+        self.is_paused = False
 
 
 if __name__ == "__main__":
 
-	global downloadFile
+    global downloadFile
 
-	downloadFile = DownloadClient('/home/neel/Atlan/', 'Records.csv') 
+    downloadFile = DownloadClient(os.getcwd(), 'Records.csv')
 
-	 """
-    Usage:
+    instructions = {1: "Start Download",
+                    2: "Pause",
+                    3: "Resume",
+                    4: "Abort",
+                    5: "Exit program"
+                    }
 
- 	input via CLI
-        	1   	- 	Required  : Start Download
-        	2       - 	Required  : Pause Download
-        	3       - 	Required  : Resume Download
-        	4       - 	Required  : Abort Download
-    """
+    print("{:<25} {:<10}".format('Input Command CLI', 'Action'))
 
+    for k, v in instructions.items():
+        print("{:<25} {:<10}".format(k, v))
 
-	while (downloadFile.is_downloading):
-		command = input()
+    while downloadFile.is_downloading:
+        command = input()
 
-		if command == '1':
-			thread = Thread(target = downloadFile.start_download)
-			thread.start()
+        if command == '1':
+            thread = Thread(target=downloadFile.start_download)
+            thread.start()
 
-		elif command == '2':
-			downloadFile.pause_download()
+        elif command == '2':
+            downloadFile.pause_download()
 
-		elif command == '3':
-			downloadFile.resume_download()
+        elif command == '3':
+            downloadFile.resume_download()
 
-		elif command == '4':
-			downloadFile.cancel_download()
-			break
+        elif command == '4':
+            downloadFile.cancel_download()
+            break
 
-		else:
-			print("Please enter a valid command")
+        elif command == '5':
+            break
+
+        else:
+            print("Please enter a valid command")

@@ -10,7 +10,7 @@ class DownloadStartController(APIView):
 
     def get(self, request):
 
-        file_path = request.query_params['path']
+        file_path = request.query_params['file_name']
         bytes_read = int(request.query_params['bytes_read'])
         manager = DownloadManager(file_path, bytes_read)
 
